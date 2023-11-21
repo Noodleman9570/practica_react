@@ -5,7 +5,7 @@ import { TURNS } from './constants.js'
 import { checkWinnerFrom, checkEndGame } from './logic/board.js'
 import { WinnerModal } from './components/WinnerModal.jsx'
 import './App.css'
-
+import { saveGameStorage, resetGameStorage } from './logic/storage/index.js'
 
 
 function App() {
@@ -23,6 +23,8 @@ function App() {
       setBoard(Array(9).fill(null))
       setTurn(TURNS.X)
       setWinner(null)
+
+      resetGameStorage()
     }
 
     const updateBoard = (index) => {
@@ -34,8 +36,10 @@ function App() {
       setBoard(newBoard)
       const newTurn = turn == TURNS.X ? TURNS.O : TURNS.X
       setTurn(newTurn)
-      window.localStorage.setItem('board', JSON.stringify(newBoard))
-      window.localStorage.setItem('turn', turn)
+      saveGameStorage({
+        board: newBoard,
+        turn: newTurn
+      })
       // revisar si hay ganador
       const newWinner = checkWinnerFrom(newBoard)
       if(newWinner) {
@@ -46,10 +50,10 @@ function App() {
       }
     }
 
-  console.log(board)
   return (
     <main className='board'>
       <h1>Tic tac toe</h1>
+      <button onClick={resetGame}>Reset del juego</button>
       <section className='game'>
         {
           board.map((square, index) => {
